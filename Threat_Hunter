@@ -1,747 +1,90 @@
-Here’s a 3-month plan tuned for you:
-✅ 4 days/week
-✅ 2–3 hours/day
-✅ Target roles: **Threat Hunter / Threat Detection Engineer / Endpoint Security Engineer**
-✅ Uses your existing **MDE experience** instead of starting from zero.
+What is SOC?
+-- Security Operation Center
+-- Central Hub of Organization's cybersecurity operations
+-- Responsible for monitoring, detecting, responding to and mitigating cyber threats in real-time.
+-- Provided continous monitoring and protection against cyberattack, data breaches and compliance risks.
+-- Eg- Human nervous system/ brain which recives million ofsignal from body. Similarly, SOC recives millions of alerts/logs from different sources-
+a. Firewall, Router, VPN logs
+b. EDR
+c. User Behavior Analytics (UEBA).
+d. Cloud services, Databases
+Out of all the above only few dozen of alerts/incidents are actionable which we get after correlating, filtering and enrichment.
 
-Use “Day 1–4” on any four days you prefer each week.
 
----
+Tier-1 Specalist-
+-- Collecting raw data
+-- Reviewing alarms incident
+-- Determine the severity or criticality of alert.
+-- Confirm is the alert is True positive or False Positive.
+-- Monitoring, managing and configuring tools
+-- Escalate to Tier-2
+-- Eg- Data Exfilteration
 
-## Overall structure (high level)
+Tier-2 Specialist-
+-- Higher severity incident.
+-- Actively montioring
+-- Use of IOC and Rules.
+-- Scope of attack and aware of affected/compromised systems.
+-- eg- True postive Phishing alert which is has malicious link clicked by the user.
 
-* **Month 1 – Foundations + Endpoint Security Engineering**
+Tier-3 Specialist/ Threat Hunter-
+-- Actively monitoring
+-- Research for new malware present in the world and create IOC and rules for same.
+-- Review Tier-1 and Tier 2 provided data.
 
-  * Core SOC + threat hunting basics, Windows & network fundamentals, MITRE ATT&CK
-  * EDR architecture, MDE, hardening, policies, basic IR playbooks
 
-* **Month 2 – Threat Hunting + Detection Engineering**
+>> All Tiers comes under Incident Response Coordinator.
 
-  * KQL, SIEM queries, hunting methodology
-  * From hunt → detection rules → tuning & validation
 
-* **Month 3 – Cloud/Identity + Projects + Interview Prep**
+SOC Manager-
+-- Hiring and provide training.
+-- Managing team.
 
-  * Azure AD / M365 hunting
-  * 2–3 solid hunt case studies + detection rules
-  * Resume + interview story prep
 
-For each day below, think:
+Additional roles-
+1. Reverse Engineers-
+-- Check malware and how it works. How it came into the system (decomplie malware).
+-- They decompile malware samples in sandboxed or virtual environments.
+-- Goal is to identify Indicators of Compromise (IOCs), command-and-control (C2) mechanisms, persistence techniques, and exploit payloads.
+-- Create custom detection signatures, strengthens EDR tools, and guides patching or remediation efforts
 
-* ~45 min **theory**
-* ~60–90 min **hands-on**
-* ~30–45 min **notes / flashcards / documentation**
 
-I’ll also mention example platforms:
-**Microsoft Learn, TryHackMe / BlueTeamLabs, Splunk / Sentinel free training, Atomic Red Team docs, official MS Defender docs.**
+2. Threat Hunters- 
+-- Proactively search for advanced threat by looking at the logs.
+-- Use Frameworks, Threat intelligence, Behavioral Analysis.
+-- Think about the compromised scenerios and accordingly check the logs, memory dumps, Endpoint telemetry.
+-- Improving detection rules, refining SIEM correlation logic, and closing visibility gaps. 
+-- Also called as “offensive defense” of the SOC.
 
----
 
-## Month 1 – Foundations & Endpoint Security (Weeks 1–4)
 
-### Week 1 – Core SOC & Threat Hunting Basics
+3. Forensic Analyst-
+-- Deeper analysis once an incident occurred.
+-- Post-mometurm of alert/incidents.
+-- Recover deleted files, analyze registry keys, inspect system memory, and trace timelines from log files. 
+-- Work is critical during incident response, litigation, or regulatory investigations.
+-- Using tools like FTK, EnCase, or Autopsy, they aim to preserve evidence, identify root causes, and recommend long-term mitigations while maintaining chain-of-custody procedures for legal admissibility.
 
-**Day 1 (2–3h)**
 
-* Theory:
+4. Security Architects/ Security Consultant-
+-- Design the blueprint of the organization’s security posture. 
+-- They determine how tools (e.g., SIEM, EDR, IDS/IPS) integrate, how zones are segmented.
+-- How policies are enforced across on-prem, cloud, and hybrid environments. 
+-- Confim how we select alert/incident risk, select technologies needs. 
+-- Security controls aligned with compliance frameworks (NIST, ISO 27001, etc.).
 
-  * What does a **SOC**, **Threat Hunter**, and **Detection Engineer** actually do.
-  * Cyber kill chain, MITRE ATT&CK overview.
-* Practice:
 
-  * Browse MITRE ATT&CK Enterprise matrix; read 5–7 common techniques (T1059, T1053, T1078, etc.).
-* Notes:
+Benefits of SOC-
+-- 24/7 Monitoring of Threat and responding to them.
+-- Incident Handling
+-- Early detection of Threats
+-- Expertise and Specialization handles by different profiles.
 
-  * Start a **“Threat Hunting Notebook”** (OneNote / Notion / Word) and write:
 
-    * Role definitions
-    * Kill chain stages
-    * ATT&CK techniques you studied.
+SOC Workflow-
 
-**Day 2**
+Data Collection --> Data Normalization and Correlation --> Alert Triage --> Incident Investigation --> Incident Investigation --> Recovery --> Recovery, Documentation and Post-incident review.
 
-* Theory:
 
-  * **Windows internals for blue team**: processes, services, registry, scheduled tasks, user profiles.
-* Practice:
 
-  * On a lab/VM: browse Task Manager, Process Explorer, Services, Task Scheduler.
-* Notes:
 
-  * List “normal” Windows processes and locations (explorer.exe, lsass.exe, winlogon.exe, etc.).
-
-**Day 3**
-
-* Theory:
-
-  * Networking basics for hunters: IP, TCP vs UDP, ports, DNS, HTTP/HTTPS, proxies.
-* Practice:
-
-  * Capture some traffic with Wireshark or tcpdump and identify:
-
-    * DNS lookups
-    * HTTP requests
-* Notes:
-
-  * Make a small table: **common ports** (80, 443, 3389, 53, 445, 22, 25, etc.) + which protocol/service.
-
-**Day 4**
-
-* Theory:
-
-  * Log types: Windows Event Logs (Security, System, Application), Sysmon, EDR logs, firewall logs, proxy/DNS logs.
-* Practice:
-
-  * Open Event Viewer on a lab machine and explore:
-
-    * Logon events (4624/4625)
-    * Process creation (4688 if enabled, or Sysmon event 1).
-* Notes:
-
-  * Note which **log sources** are critical for which phase of attack.
-
----
-
-### Week 2 – ATT&CK, Common Attacks & Visibility
-
-**Day 1**
-
-* Theory:
-
-  * Deep dive: MITRE ATT&CK **Initial Access**, **Execution**, **Persistence**.
-* Practice:
-
-  * For each of these 3 tactics, pick **2 techniques** and write:
-
-    * What it is
-    * What logs would show it
-    * Example real-world tool (e.g., PsExec, PowerShell).
-* Notes:
-
-  * Start a “**Technique → Data Source → Detection Idea**” table.
-
-**Day 2**
-
-* Theory:
-
-  * Malware basics: droppers, downloaders, RATs, ransomware.
-  * Phishing and malicious docs (macros).
-* Practice:
-
-  * Read 1–2 public incident writeups (ransomware / phishing) and map them to ATT&CK.
-* Notes:
-
-  * Extract 3–5 “**detection ideas**” from the writeups.
-
-**Day 3**
-
-* Theory:
-
-  * Credential access: LSASS dumping, Mimikatz, token theft, brute force, password spray.
-* Practice:
-
-  * Read how LSASS dumping looks in:
-
-    * **MDE** alerts / logs
-    * Sysmon events (if you have it).
-* Notes:
-
-  * Write: “How would I detect LSASS dump in EDR, SIEM, and Windows logs?”
-
-**Day 4**
-
-* Lab-focused:
-
-  * Use TryHackMe / BlueTeamLabs or a lab guide to simulate:
-
-    * Simple PowerShell execution
-    * Scheduled task persistence
-  * Observe how they appear in logs or MDE (if you can).
-* Notes:
-
-  * Capture screenshots and keep them in a “**hunt evidence**” folder.
-
----
-
-### Week 3 – Endpoint Security Engineer I (EDR & Hardening)
-
-**Day 1**
-
-* Theory:
-
-  * EDR architecture: sensors, cloud backend, analytics, response.
-  * How MDE fits into bigger architecture (Defender XDR).
-* Practice:
-
-  * Draw a simple architecture diagram: endpoint → MDE → Defender portal → SIEM.
-* Notes:
-
-  * List pros/cons of EDR vs traditional AV.
-
-**Day 2**
-
-* Theory:
-
-  * Windows hardening: CIS baselines, local security policy, account policies, UAC, AppLocker basics.
-* Practice:
-
-  * On a lab machine, review:
-
-    * Local Security Policy
-    * Services that are not needed.
-* Notes:
-
-  * Document 5–10 **hardening recommendations** you understand.
-
-**Day 3**
-
-* Theory:
-
-  * MDE components you already use: antivirus, **Attack Surface Reduction (ASR)**, Exploit protection, Firewall rules.
-* Practice:
-
-  * Read MS docs for each feature and note:
-
-    * Typical **use cases**
-    * **Common false positives**.
-* Notes:
-
-  * Start a table: “Feature → Purpose → Typical Config → FP Risk.”
-
-**Day 4**
-
-* Lab:
-
-  * In a test device, if allowed:
-
-    * Change ASR rules from Audit → Block for a couple of safe rules.
-    * Trigger a benign event (like Word macro test, if safe and permitted).
-  * Check how it shows in MDE: alerts, events, advanced hunting.
-* Notes:
-
-  * Document your steps as a mini **“Endpoint Security Engineer”** use case.
-
----
-
-### Week 4 – Endpoint Security Engineer II (Policies & Response)
-
-**Day 1**
-
-* Theory:
-
-  * Endpoint policy management:
-
-    * Device groups in MDE
-    * Security baselines
-    * Integration with Intune / GPO (conceptual).
-* Practice:
-
-  * Review how policy assignment is done in your real / demo environment.
-* Notes:
-
-  * Draw a flow: “New device → Assigned to group X → Policies Y/Z apply”.
-
-**Day 2**
-
-* Theory:
-
-  * Incident Response on endpoints: triage, containment, eradication, recovery, lessons learned.
-* Practice:
-
-  * Read at least one official IR guide (Microsoft / NIST style).
-* Notes:
-
-  * Write a **step-by-step IR checklist** for: “Suspicious process on a workstation”.
-
-**Day 3**
-
-* Lab:
-
-  * Use MDE (or a similar platform) to:
-
-    * Investigate an existing / demo alert.
-    * Collect investigation package / timeline.
-* Notes:
-
-  * Document what data you reviewed to decide if it was true positive vs false positive.
-
-**Day 4**
-
-* Deliverable:
-
-  * Write **2 small playbooks** (1–2 pages each):
-
-    1. Malware detected on endpoint
-    2. Suspicious PowerShell / script execution
-  * Include: signals, steps, and escalation criteria.
-
----
-
-## Month 2 – Threat Hunting & Detection Engineering (Weeks 5–8)
-
-### Week 5 – KQL & Advanced Hunting I (MDE/Sentinel)
-
-**Day 1**
-
-* Theory:
-
-  * KQL basics: table, project, where, order by.
-* Practice:
-
-  * Run simple queries in **MDE Advanced Hunting** or Sentinel (if you have).
-  * Examples:
-
-    * List all process events for last 1 hour.
-* Notes:
-
-  * Keep a “KQL cheatsheet” of useful patterns.
-
-**Day 2**
-
-* Theory:
-
-  * More KQL: summarize, count, top, distinct.
-* Practice:
-
-  * Queries:
-
-    * Top 20 processes by count.
-    * Top 10 devices by number of alerts.
-* Notes:
-
-  * Save these queries as **“reusable hunt queries”**.
-
-**Day 3**
-
-* Theory:
-
-  * join, union basics in KQL.
-* Practice:
-
-  * Join process events and network events by DeviceId / Time.
-* Notes:
-
-  * Document 2 examples where **joins** help in hunting.
-
-**Day 4**
-
-* Lab:
-
-  * Scenario: “Hunt for suspicious PowerShell.”
-
-    * Search for `powershell.exe`, encoded commands, `-nop`, `-w hidden`.
-  * Record:
-
-    * Hypothesis, query used, findings.
-* Notes:
-
-  * Save this as **Hunt #1** in your notebook.
-
----
-
-### Week 6 – SIEM & Log Sources for Hunting
-
-**Day 1**
-
-* Theory:
-
-  * SIEM basics: ingestion, normalization, correlation, dashboards.
-* Practice:
-
-  * Use Splunk/Sentinel free labs/training to:
-
-    * Run queries on Windows Security logs.
-* Notes:
-
-  * Note differences between **EDR hunting** vs **SIEM hunting**.
-
-**Day 2**
-
-* Theory:
-
-  * DNS, web proxy, firewall logs for hunting C2 and exfiltration.
-* Practice:
-
-  * Query:
-
-    * Rare domains
-    * Rare external IPs
-* Notes:
-
-  * Add at least 3 **detection ideas** from DNS/proxy logs.
-
-**Day 3**
-
-* Lab:
-
-  * Scenario: “Unusual login activity.”
-
-    * Query failed logons, logons outside business hours, logons from rare hosts.
-* Notes:
-
-  * Save as **Hunt #2 (Authentication Anomalies)**.
-
-**Day 4**
-
-* Consolidation:
-
-  * Clean up your KQL/SIEM queries, add comments and descriptions.
-  * Organize by theme:
-
-    * Process-based, network-based, identity-based hunts.
-
----
-
-### Week 7 – Threat Hunting Methodology & Hypothesis-Driven Hunts
-
-**Day 1**
-
-* Theory:
-
-  * Full Hunt lifecycle:
-
-    * Plan → Hypothesis → Data → Execution → Findings → Detection → Report.
-* Practice:
-
-  * Pick 1 ATT&CK technique you like and write a **full hypothesis**, e.g.:
-
-    * “Adversary is using scheduled tasks for persistence on endpoints”.
-* Notes:
-
-  * Define success metrics for your hunts (e.g., found X suspicious entries).
-
-**Day 2**
-
-* Lab:
-
-  * Execute that hypothesis in your data (MDE/SIEM).
-  * Look for:
-
-    * Abnormal scheduled tasks / run keys / startup folders.
-* Notes:
-
-  * Write observations even if you **don’t** find an incident.
-
-**Day 3**
-
-* Theory:
-
-  * Threat intel basics:
-
-    * IOC vs IOA
-    * Using public intel (VirusTotal, abuse.ch, etc.) in hunting.
-* Practice:
-
-  * Pick 1–2 public reports and extract:
-
-    * Domains
-    * Hashes
-    * TTPs
-* Notes:
-
-  * Map IOCs → your environment’s data sources.
-
-**Day 4**
-
-* Deliverable:
-
-  * Write your first **proper hunt report** (2–3 pages) for one scenario:
-
-    * Background
-    * Hypothesis
-    * Data sources
-    * Queries
-    * Findings
-    * Detection & hardening recommendations.
-
----
-
-### Week 8 – Detection Engineering
-
-**Day 1**
-
-* Theory:
-
-  * Detection engineering concepts:
-
-    * True/false positives
-    * Precision vs recall
-    * Rule lifecycle (draft → test → deploy → tune → retire).
-* Practice:
-
-  * Take one of your KQL hunt queries and think:
-
-    * How can I turn this into an **analytic rule**?
-* Notes:
-
-  * Note down matching conditions & thresholds.
-
-**Day 2**
-
-* Theory:
-
-  * Rule formats: KQL rules, Sigma rules (vendor-agnostic), custom detections.
-* Practice:
-
-  * Pick 1 scenario (e.g., encoded PowerShell) and write:
-
-    * A KQL-based detection condition.
-    * A Sigma-style rule (even just structure).
-* Notes:
-
-  * Start a small **“Detection Catalog”**.
-
-**Day 3**
-
-* Lab:
-
-  * Read about **Atomic Red Team**.
-  * Plan 1–2 test cases (e.g., run specific ATT&CK techniques in lab).
-* Notes:
-
-  * Map: Atomic test → ATT&CK ID → log entries you expect.
-
-**Day 4**
-
-* Tuning & Documentation:
-
-  * For each detection idea:
-
-    * What noise do you expect?
-    * How to reduce it (add exclusions, frequency, whitelisting)?
-  * Update your detection catalog with:
-
-    * Name, purpose, logic overview, FP notes.
-
----
-
-## Month 3 – Cloud/Identity, Projects & Interview Prep (Weeks 9–12)
-
-### Week 9 – Identity & Azure AD / Entra ID Hunting
-
-**Day 1**
-
-* Theory:
-
-  * Azure AD / Entra basics:
-
-    * Users, groups, apps, service principals, conditional access.
-* Practice:
-
-  * Read about Azure sign-in logs & audit logs.
-* Notes:
-
-  * List important identity-related fields:
-
-    * IP, location, client app, MFA status, device info.
-
-**Day 2**
-
-* Theory:
-
-  * Identity attack techniques:
-
-    * Password spray
-    * MFA fatigue
-    * Consent phishing
-    * Impossible travel.
-* Practice:
-
-  * Design 1–2 KQL/SIEM queries to catch:
-
-    * Password spray
-    * Impossible travel.
-* Notes:
-
-  * Add them as **identity hunts**.
-
-**Day 3**
-
-* Lab:
-
-  * If you can access any cloud logs:
-
-    * Explore sign-ins, risky sign-ins, and conditional access logs.
-* Notes:
-
-  * Write “Identity Hunt #1 – Anomalous Sign-ins”.
-
-**Day 4**
-
-* Deliverable:
-
-  * One **identity-focused hunt report**:
-
-    * Similar structure to Week 7 report, but focused on logons & identity.
-
----
-
-### Week 10 – Email, SaaS & Data Exfiltration
-
-**Day 1**
-
-* Theory:
-
-  * M365/Email security:
-
-    * Mail flow basics
-    * Phishing techniques
-    * Defender for Office 365 basics (phish, spam, malware protection).
-* Practice:
-
-  * Read an official “phishing investigation” workflow.
-* Notes:
-
-  * Write your own **phishing triage checklist**.
-
-**Day 2**
-
-* Theory:
-
-  * Data Exfiltration via:
-
-    * Email, cloud storage, browser uploads, removable media.
-* Practice:
-
-  * Identify which logs (endpoint, proxy, CASB, Purview DLP) can show exfil.
-* Notes:
-
-  * Map 2 exfil methods to data sources & detection ideas.
-
-**Day 3**
-
-* Lab:
-
-  * Design a hunt:
-
-    * Large outbound data transfers
-    * Many sent emails with attachments to external recipients
-    * Suspicious use of USB in endpoint logs (if available).
-* Notes:
-
-  * Save as **Hunt #3 – Data Exfil / Suspicious Transfers**.
-
-**Day 4**
-
-* Deliverable:
-
-  * Short **playbook**:
-
-    * “Potential Data Exfiltration from Endpoint / SaaS”
-    * Include: detection triggers, quick triage steps, data to pull, escalation.
-
----
-
-### Week 11 – Capstone Hunts & Detections
-
-Here you convert all your work into **portfolio-worthy** material.
-
-**Day 1** – Project 1: Endpoint Hunt
-
-* Pick your best **endpoint-centric** scenario:
-
-  * Suspicious PowerShell, LSASS dump, persistence via scheduled task.
-* Deliverables:
-
-  * Final KQL/SIEM queries.
-  * Updated hunt report (cleaned up language).
-
-**Day 2** – Project 2: Identity Hunt
-
-* Pick your best **identity-centric** scenario:
-
-  * Password spray, impossible travel, strange MFA failures.
-* Deliverables:
-
-  * Identity hunt report.
-  * Matching detection rule (KQL / Sigma-like).
-
-**Day 3** – Project 3: Network/Exfil Hunt
-
-* Pick your **network/exfil** scenario:
-
-  * DNS tunneling-like behavior, rare domains, unusual outbound traffic.
-* Deliverables:
-
-  * Hunt report
-  * Detection logic + tuning notes.
-
-**Day 4**
-
-* Consolidation:
-
-  * You now have **3 full hunt reports + 3–6 detection ideas**.
-  * Put them in a single folder structured as:
-
-    * `/Hunts/` (PDF/Word)
-    * `/Detections/` (KQL/Sigma snippets)
-    * `/Playbooks/` (IR, phishing, data exfil, etc.)
-
----
-
-### Week 12 – Portfolio, Resume & Interview Prep
-
-**Day 1** – Resume & Role Mapping
-
-* Take your resume and:
-
-  * Add a **“Threat Hunting & Detection Projects”** section listing:
-
-    * 2–3 best hunts (1 line each)
-  * Emphasize:
-
-    * MDE expertise
-    * KQL / SIEM experience
-    * Endpoint hardening and IR.
-
-**Day 2** – Storytelling & Behavioral
-
-* Prepare **3–4 stories** using STAR:
-
-  * A tricky incident or investigation
-  * A detection you tuned or created
-  * A time you coordinated with a team during an incident.
-* Practise saying them out loud.
-
-**Day 3** – Technical Q&A
-
-* Spend 2–3 hours on:
-
-  * Threat hunting & SOC interview questions
-  * Explaining:
-
-    * How you’d investigate suspicious PowerShell
-    * How to detect LSASS dump
-    * How to build a hunt from an ATT&CK technique.
-* Write short, structured answers in your notes.
-
-**Day 4** – Gap Review & Next 3-Month Plan
-
-* Review:
-
-  * Where do you still feel weak? (Cloud? Linux logs? Detection tuning?)
-* Make a simple next-90-day plan:
-
-  * e.g., “More cloud hunting, one new hunt/week, deeper Splunk.”
-
----
-
-## How to use this plan
-
-* Treat it as **minimum viable plan**: if you get extra time, deepen labs, not theory.
-* Keep everything in **one structured knowledge base**:
-
-  * Notes
-  * KQL snippets
-  * Hunt reports
-  * Playbooks
-* These become assets for:
-
-  * Your **resume**
-  * **Interview answers**
-  * “Show me your work” in future roles.
-
-If you want, next step I can:
-
-* Turn this into a **simple Excel tracker** (Weeks × Days × Topic × Status), or
-* Help you design the **3 hunt reports** in a proper Word/PDF format.
