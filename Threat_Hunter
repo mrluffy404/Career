@@ -73,6 +73,7 @@ Additional roles-
 -- Confim how we select alert/incident risk, select technologies needs. 
 -- Security controls aligned with compliance frameworks (NIST, ISO 27001, etc.).
 
+=========================================================================================================
 
 Benefits of SOC-
 -- 24/7 Monitoring of Threat and responding to them.
@@ -81,9 +82,50 @@ Benefits of SOC-
 -- Expertise and Specialization handles by different profiles.
 
 
+=======================================================================================================
+
 SOC Workflow-
 
 Data Collection --> Data Normalization and Correlation --> Alert Triage --> Incident Investigation --> Incident Investigation --> Recovery --> Recovery, Documentation and Post-incident review.
+
+
+1. Data Collection-
+Gathering of raw data from different sources.
+
+a. Network Devices- 
+-- Ex. Firewall, Router, Swtiches, IDS/IPS.
+-- Data collected- Traffic flow (Lateral Movement, Privelage Escalation), Blocked ports (Port scanning), Denied connection, Scanning attempts.
+
+c. Endpoint Devices-
+-- Ex. EDR, AV, OS
+-- Data Collectede- File access, Process creation (Event Viewer, Task manager), Command-line usage (access done on CMD and PowerShell), Registry changes.
+
+d. Servers & Applications-
+-- Ex- Database Servers, Web Servers, Email Servers.
+-- Data Collected- Authentication logs (Brute-force login/attempts), SQL Queries (SQL injection/ Cross-site scripting), Web Requests, Access Logs.
+
+
+e. Identity & Access Management-
+-- Ex. Active Directory, Okta, LDAP
+-- Data Collected- Login, failed login attempts, User provisioning and de-provisioning.
+
+f. Cloud Infrastructure-
+-- Ex. AWS CloudTrail, Azure Logs, GCP StackDriver
+-- Data Collected- API Calls, Account Changes, Cloud Resources modifications.
+
+
+g. Security Tools-
+-- Ex. SIEM, SOAR, DLP, UEBA
+-- Data Collected- Alert, Correlation Output, Risk Scores
+
+
+h. Threat Intelligence Feeds-
+-- Ex. STIX/TAXII, OSINT, Commercial Feeds.
+-- Data Collected- Known malicious IPs/Domains, TTPs, IOCs.
+
+
+=========================================================================================================
+
 
 
 
