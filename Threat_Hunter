@@ -126,6 +126,67 @@ h. Threat Intelligence Feeds-
 
 =========================================================================================================
 
+2. Data Normalization and Crorelation-
+
+Data Normalization- Cleaning and Structuring the noise.
+
+Noramlization- Process of converting various log formats from different sources into a common structured schema so that they can be efficiently processed, analyzed, and correlated.
+
+Ex.-
+Without Normalization:
+>> A firewall logs says "sc_ip"
+>> A linux logs says "source-address"
+>> A cloud logs says "ip.src"
+
+For getting the alerting and searching, they all need to mean the same thing, so that they're noramlized into a standard field- source_ip.
+
+
+Data Correkation- Connecting the Dots
+
+Correlation- Process of linking multiple normalized events across systems to detect suspicious patterns that single events alone would miss.
+
+Ex.-
+>> A login from a new device which is followed by a privilege escalation and followed by a large data download of a malaicious .exe file.
+
+
+=======================================================================================================
+
+
+3. Alert Triage- Catergorzing alert depending on their criticality. Ex.- First solve the Critical alert, then High followed by Medium and then Low.
+ny mahi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
