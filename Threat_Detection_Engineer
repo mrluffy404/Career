@@ -153,15 +153,125 @@ Ex.-
 
 
 3. Alert Triage- Catergorzing alert depending on their criticality. Ex.- First solve the Critical alert, then High followed by Medium and then Low.
-ny mahi
+
+Alert Triage- Process in SOC where incoming security alerts are evaluated, categorized, prioritized, and routed based on their severity, credibility and potential impact. 
+Typically handled by Tier 1 SOC analyst.
+
+Ex.- Think of Emergency room where Nurse (SOC Tier 1)
+>> Alert- Patients walk in ER.
+>> Triage Nurse (Tier 1 Analyst) checks-
+    + Check for the symptoms (alert details)
+    + Ask key questions (context enrichment)
+    + Decides Urgency- Life-Threating (Malware on Critical DB servers) or Minor (Failed login attempts)
+    + Routes Patient to specialist (Tier 2 or Incident Response Team) or discharges them (False Positive).
+Just like nurse who doesn't perform surgery but know which right case should go to the right doctor, TIer 1 triage doesn't resolve the issue but ensures right attention is given.
 
 
+Ex.2-
+>> Receive Alert from SIEM, EDR or SOAR
+>> Enrich alert with IP reputation, Hash, User info., etc.
+>> Evaluate Credibility- Is alert real or False Positive.
+>> Assess Severity- Confirm is the activity suspicious, malicious.
+>> Categorize the alert (Low, Medium, High, Critical)
+>> Respond or Escalate
+
+Purpose of Alert Triage-
+>> Filter out False Positive.
+>> Identify true security incidents.
+>> Determine priority based on criticality. (eg. assest value, threat level)
+>> Escalate to higher-tier analyst when needed.
+>> Document finding for audit and Incident Response.
 
 
+Reported Created include atleast these items-
+>> Who- Who performed the action
+>> What- What action was performed
+>> When- When did the action started and ended
+>> Where- From where did they started the perform the action (IP or Website)
+>> Why- Why do you think this alert is critical, high, medium or low
 
 
+==================================================================================
+
+4. Incident Investigation-
+>> Step 1- Initial Alert Intake (Tier 1)
+  + 100+ alerts generated.
+  + Tier 1 perform alert triage-
+  + Out of 100 find that 80-90 are false positive or low severity alerts.
+  + 10-15 alerts are escalated to Tier 2 where alert show suspicious behavior or need deeper analysis.
+
+>> Step 2- Deep investigation (Tier 2)
+  + Escalated alerts are- Correlated, Cross referenced with Threat Intel, invetigated using MITRE technique
+  + Confirms 9 are confirmed Safe through investigation and Containable incidents 
+  + 1 alerts is identified as a serious/complex case which needs specialized skills.
+
+>> Step 3- 
+  + High Severity alert which involves-
+    a. Advanced Persistent Threat (APT)
+    b. Insider activity
+    c. Malware that bypassed detection
+    d. Cloud misconfiguration exploitation
+
+  + Tier 3 perform-
+    a. Memory analysis
+    b. Packet capture review (Wireshark)
+    c. Reverse Engineering
+    d. RCA
 
 
+=================================================================================
+
+5. Incident response-
+
+Steps Taken in IR phase-
+1. Confirmation & Classification
+    + Tier 2/Tier3 confirms that actual security incident has occurred.
+    + Incident is classified (eg- Malware infection, Data breach, Insider Threat)
+
+2. Containment (short-term solution)
+    + Isolate the device to stop spread. (Disable account, unplug device from network)
+    + USe SOAR playbook to automate quick response actions.
+
+3. Evidence Preservation-
+    + Forensics team captures memory dumps, disk images, logs, PCAPs to preserve volatile evidence.
+    + Maintained if legal action is needed.
+
+4. Threat Eradication-
+    + Remove malware, kill malicious processed, pathc explioted vulnerabilities.
+    + Revoke compromised credentials or reset passowrds.
+
+5. Internal communication-
+    + Alert relevant teams- IT, Legal, Complaince, Management
+    + Avoid public panic or information leaks until fact is clear
+
+
+==========================================================================================
+
+
+6. Recovery & Documentation-
+
+1. System Restoration-
+  + Restore from back-ups or re-image the device.
+  + Validate the device integrity and confirm the threat is fully removed.
+
+2. Reconnection and Testing-
+  + Reconnect cleaned device to network gradually and in isolated env. to confirm that device is safe.
+  + Test business functionality (eg. Can employees login, app works, services run)
+
+3. Patching and Hardening-
+  + Apply missing patches and security updates that are missing in all the devices.
+  + Disable unused ports/services, Access control tightening, Implement MFA if not present.
+
+4. Monitoring for recurrence-
+  + Monitoring the affected devices for check the if there are any traces of attacker.
+  + Use deception tools (honeypots) or aggressive loggin temporarily.
+
+5. User Awareness-
+  + If applicable inform affected user. (eg. Password reset, phishing awareness)
+  + Legal/Compliance notification if PII or Sensitive data was breached.
+
+
+=================================================================================
 
 
 
