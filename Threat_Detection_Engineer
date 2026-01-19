@@ -273,8 +273,39 @@ Steps Taken in IR phase-
 
 =================================================================================
 
+SOC Tools
+
+SOC Tools----> Core Tools  ---> Advanced Tools
 
 
+1. SIEM (Security and Event Management tool)- 
+    + It is Central System that collects, aggregates, correlates, and analyzes logs from across your environment.
+    + Purpose- Detects and alerts on suspicious activity using rules, analytics and correlation engines.
+    + Ex.- Splunk, IBM Qradar, Sentinal, ArcSight, LogRhythm.
+    + TIER 1 Role- Monitor dashboards, investigate low/medium alerts.
+    + TIER 2 Role- Create/Customize correlation rules, threat hunting, advanced incdient investigations.
+
+
+2. SOAR (Security Orchestration, Automation and Response)- SOAR platforms automate incident response using playbooks, reducing manual work and response time.
+    + Set of technologies that enables security teams to streamline and automate their security operations.
+    + Its a critical components for modern SOC. 
+    + SOAR platforms help SOCs by orchestrating workflows, automating repetitive tasks, and improving the overall efficiency, and effective of incident response.
+
+>> Security Orchestration-
+
+>> Automation-
+
+>> Response-
+
+
+3. TIP (Threat Intelligence Platform)- A TIP centralizes and enriches threat intelligence feeds to add context to indicators of compromise (IOCs)
+
+
+4. NTA (Network Traffic Analysis)- NTA tools use behavioral analytics to detect anomalies like laterla movement and data exfilteration across n/w.
+
+
+
+5. IDS/IPS (Intruder Detection System/ Intruder Prevention System)- IDS/IPS monitor n/w traffic for malicious patterns, with IPS capable of blocking threats in real time.
 
 
 
