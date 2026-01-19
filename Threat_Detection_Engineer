@@ -271,6 +271,7 @@ Steps Taken in IR phase-
   + Legal/Compliance notification if PII or Sensitive data was breached.
 
 
+
 =================================================================================
 
 SOC Tools
@@ -299,32 +300,108 @@ SOC Tools----> Core Tools  ---> Advanced Tools
 
 
 3. TIP (Threat Intelligence Platform)- A TIP centralizes and enriches threat intelligence feeds to add context to indicators of compromise (IOCs)
-
+    + Provide security team with info. on known malware & other threats.
+    + If you haven't seen any of a malware so we can use this platform where someone has came across this malware in world.
+    + Ex.- Anomali, Threat connect, 
 
 4. NTA (Network Traffic Analysis)- NTA tools use behavioral analytics to detect anomalies like laterla movement and data exfilteration across n/w.
-
-
+    + Analyze network traffice to security threats, performance issues and other anomalies.
+    + Ex-. Dark trace 
 
 5. IDS/IPS (Intruder Detection System/ Intruder Prevention System)- IDS/IPS monitor n/w traffic for malicious patterns, with IPS capable of blocking threats in real time.
+    + 
+
+6. EDR (Endpoint Detection and Response)-
+    + Endpoint detection and response (EDR) software is used by security operations teams to detect, contain, investigate and remediate cyberattacks—such as ransomware and other malware.
+    + EDR tools are used to discover suspicious activities on hosts and endpoints that are connected to the network—such as mobile phones, desktops, laptops, and virtual machines. 
+    + EDR software integrates real-time continuous monitoring and collection of endpoint data and actionable threat intelligence with rules-based, automated cyber threat response and analysis capabilities. Whether detecting, responding, or remediating, EDR solutions offer a great first and last line of defense for networked computer workstations
+
+===================================================
+
+Advanced Tools-
+
+7. Vulnerability Tools-
+    + Types of VA tools-
+        a. Network-based scanners-
+            >> Ex.- Nmap,
+
+        b. Web application scanners-
+            >> Ex.- Burpsuit
+
+        c. Host-based scanners-
+            >> Ex.- Nessus Scanner
+
+        d. Wireless network scanners-
+            >> Ex.- 
+
+Widely used tools-
+>> Nessus-
+>> Qualys-
+>> OpenVas- Alternative to Nessus as it is a open-source.
+>> Nmap-
+>> Acunetix- 
+>> Burp Suite- 
+
+
+8. Ticketing Tools-
+    + Tracking and escalating tool.
+    + Which ticket is assigned to whom.
+    + Tools Ex.- 
+        Jira- 
+        ServiceNow- 
+        Zendesk-
+        RT (Request Tracker)-
+        TheHive- OpenSource
+        FreshService-
+
+
+9. Sandboxing Tools-
+    + USed for experimenting Malware.
+    + Tools Ex.-
+        Cuckoo SandBox- Open-Source
 
 
 
+10. UEBA (USer and Entity Behavior Analytics)
+    + Tools Ex.- Splunk
+
+
+11. Deception Tools-
+    + Tools Ex.- 
+        Honeypots
+        HoneyNet
+        HoneyMap
+        HoneyToken- Ex. CanaryToken
+
+
+============================================================
+
+SOC KPI's and Metrics
+
+1. Operational Metrics-
+    + Mean time to Detect (MTTD)-
+    + Mean time to Response (MTTR)-
+    + Incident Response Time-
+
+2. Alert Metrics-
+    + False Positive Rate- Ex. Zoom meeting is catorgized as Data Exfilteration attempt but its False Positive as Zoom meeting is consuming alot of amount of data.
+    + True Positive Rate- 
+    + Alert Escalation Rate-
+            Alert Escalation Rate= (No. of alerts escalated/ No. of alerts received) x 100
 
 
 
+3. Strategic Metrics-
+    + Patch Rate- 
+    + Compliance Adherence Rate-
+        Adherence Score= (92x1) + (6x0.5)/100 x 100 = 95%
 
-
-
-
-
-
-
-
-
-
-
-
-
+        >> ISO 27001
+        >> NIST CSF
+        >> PCI DSS
+        >> HIPAA
+    + Cost Per Incident-
+    
 
 
 
