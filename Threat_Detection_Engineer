@@ -403,8 +403,452 @@ SOC KPI's and Metrics
     + Cost Per Incident-
     
 
+=================================================================================
+Networking-
 
 
+OSI (Open System Interconnection) Model-
+7-layer framework that explains how data flows/travel from one computer to another. 
+
+Ex.- Mailing a letter.
+1. You write a message (Application layer)
+2. You choose a language and format (Presentation layer)
+3. You open/close a session with the recipient (session layer)
+4. You prepare the envolope and confirm the delivery receipt (Transport layer)
+5. You address the envelope with city/pincode (Network layer)
+6. You give it to a post office truck (Mac) (Data link layer)
+7. The truck physically delivers it. (Physical layer)
+
+---------------------------------------------------------------------------------------------------
+
+1. Physical layer- 
+    This is Hardware side- cables, radio signals, fiber optics
+    It converts bits into signals and vice versa.
+
+Function (Soc Relevance)-
+Hardware transmission -- Rare in SOC, but crucial for outages or DOS attacks.
+
+MOCK logs to explain Layers.
+Layer1 - Physical layer- Cables, NICs, Signal transmission.
+Mock Log (Switch Interface Log):
+[SW-CORE1] %INTERFACE_DOWN: Port Gig0/2 has been administratively down 
+[SW-CORE1] %LINK_FLAP: Interface Gig0/2 flapping (up/down) detected 7 times in 2 minutes
+ 
+SOC Relevance:
+Could indicate DoS via physical disruption or a faulty NIC.
+Might explain missing logs or packet drops upstream.
+Analysts rarely investigate Layer 1 unless devices are suddenly unreachable
+
+
+
+
+2. Data link layer-
+    Think Mac addresses and Swithces. 
+    It prepares data for physical transmission and handles 
+Function (Soc Relevance)-
+MAC addressing -- ARP spoofing, switch logs manipulated.
+
+Layer 2: Data-Link Layer
+Mock Log (ARP Cache / IDS):
+ARP Spoofing Detected: - IP: 192.168.10.5 – 
+Original MAC: AA:BB:CC:DD:EE:FF – associated with above IP address
+Conflicting MAC: 11:22:33:44:55:66 – 
+Time: 2025-06-25 11:02:10 
+SOC Relevance:
+This log shows a classic ARP spoofing attempt.
+Layer 2 attacks are often used in lateral movement or MitM attacks inside corporate LANs.
+You’d check this when multiple endpoints show DNS failures, SSL cert errors, or are unable to reach the internet.
+ 
+
+
+
+3. Network layer-
+
+Function (Soc Relevance)-
+IP routing -- Source spoofing, IP anomalies
+
+Layer 3: Network Layer – IP addressing, routing, subnets
+ 
+Mock Log (Firewall Log):
+ALERT: IP Spoofing Detected - Source IP: 10.10.10.1 (internal range) - Detected on External Interface - Time: 2025-06-25 11:04:55 
+SOC Relevance:
+An attacker trying to masquerade as an internal system.
+Layer 3 threats often relate to recon, lateral movement, or bypassing perimeter security.
+Useful in correlating packet origin with known hosts
+ 
+
+
+
+4. Transport layer-
+
+
+Function (Soc Relevance)-
+Port-based communication -- TCP/UDP, SYN floods, scans
+
+
+Layer 4: Transport Layer – Ports, TCP/UDP, handshakes
+ 
+Mock Log (Firewall or Zeek):
+SYN Flood Detected: - Source IP: 203.0.113.45 - Destination IP: 10.0.0.5 - Port: 443 – 
+TCP Flags: [SYN] x 7,000 in 60s - No ACKs returned
+ 
+SOC Relevance:
+Layer 4 logs reveal scans, floods, and port misuse.
+Essential for DoS detection, service enumeration, and command/control monitoring.
+ 
+
+5. Session layer-
+
+Function (Soc Relevance)-
+Connections, Sessions -- anomalous RDP or SMB sessions
+
+
+Layer 5: Session Layer – Connection establishment, RDP, SMB
+Mock Log (Windows Security Log or Netlogon):
+New Session Established: - User: guest123 - Service: RDP 
+Source IP: 172.16.1.150 
+Duration: 6 hours - Timestamp: 2025-06-25 02:13:00 
+Alert: Unusual session time + Non-corporate IP range
+ 
+SOC Relevance:
+Unusual RDP or SMB session durations may indicate compromise or unauthorized access.
+Especially important for initial access or privilege escalation.
+
+
+
+6. Presentation layer- 
+
+Function (Soc Relevance)-
+Data encoding (SSL/TLS, Base64) -- watch for encoded malware
+
+
+
+7. Application layer-
+
+
+Function (Soc Relevance)-
+User Interface (Http/s, DNS, SMTP) -- IDS alerts, proxy logs.
+
+Layer 7: Application Layer – Web, email, DNS, FTP, etc.
+Mock Log (Proxy or DNS logs):
+Suspicious DNS Query: - Source: 10.0.0.75 – 
+Domain: s0me.exfil-domain.co – 
+Record Type: TXT – 
+Query Length: 800 bytes - Frequency: 100 requests/min
+ 
+SOC Relevance:
+Exfiltration via DNS tunneling.
+Layer 7 logs are where SOC analysts spend most of their time (e.g., HTTP, SMTP, DNS).
+This is where attackers interface with your environment.
+
+
+
+-----------------------------------------------------------------
+
+TCP/IP Model-
+
+1. Application layer-
+    + Coorespondng OSI layer- Application layer, Session layer, Presentation later.
+    + SOC Focus- App-level threats
+    + Ex.- DNS tunneling, HTTP exfilteration.
+    + Protocols and services- HTTP, FTTP, Telnet, NTP, DHCP, PING
+
+2. Transport layer-
+    + Coorespondng OSI layer- Transport layer.
+    + SOC Focus- Port Behavior
+    + Ex.- TCP reset floods, UDP beacons
+    + Protocols and services- TCP, UDP
+
+3. Internet layer-
+    + Coorespondng OSI layer- Network layer
+    + SOC Focus- Ip Movement
+    + Ex.- Ip spoofing, Traceroute
+    + Protocols and services- IP,ARP, ICMP, IGMP
+
+4.  Network-access layer-
+    + Coorespondng OSI layer- Physical and Data-link layer.
+    + SOC Focus- Lan-level activity
+    + Ex.- DMAC spoofing, ARP poisoning
+    + Protocols and services- Ethernet
+
+-----------------------------------------------------------
+
+Q. Understanding Layers Helps You Think Like an Attacker
+Attackers move through network layers:
+ 
+Initial access: Layer 7 (HTTP phishing, remote services like SSH/RDP)
+Command & control: Layers 6–7 (encrypted channels, DNS tunneling)
+Lateral movement: Layers 3–4 (IP routing, SMB over TCP)
+Persistence: Layer 2 (ARP poisoning, rogue DHCP)
+Without knowing these layers, you miss the attack path.
+
+
+----------------------------------------------------------------------------------
+
+Ports and Protocols-
+Ports- A numerical label used to identify specific processes/services on a device 
+Total Number of ports- 0–65535
+ 
+Protocols- A set of rules for communication (
+Ex.- HTTP, FTP, ICMP, DNS).
+ 
+ 
+Well-known Ports-
+Range- 0 – 1023
+Ex.- HTTP (80), HTTPS (443)
+ 
+ 
+Registered Ports-
+Range- 1024 – 49151
+Ex.- MS SQL (1433), RDP (3389)
+ 
+ 
+Dynamic/Private Ports-
+Range- 49152 – 65535
+Ex.- Ephemeral ports for client connections
+ 
+ 
+It’s absolutely vital for SOC (Security Operations Center) analysts to understand ports and protocols—think of them as the map and language of digital communication. Here's why this knowledge matters so much:
+Threat Detection – Malicious actors often exploit known ports (like TCP port 445 for SMB-based attacks or 3389 for RDP brute-force attempts). If an unusual protocol is observed on an unexpected port, it’s a huge red flag. SOC analysts need to spot these anomalies fast.
+Incident Investigation – During forensic analysis, tracing packet flows and correlating events demands knowing what each port and protocol usually signifies. For example, seeing DNS (port 53) used for data efiltration would tip off a sophisticated threat
+Rule Tuning for SIEM/IDS – Analysts configure detection tools like Snort or Suricata using rules based on port/protocol behavior. Without understanding them, alerts could be noisy, irrelevant—or worse, miss real threats entirely. 
+Understanding Normal Behavior – To detect abnormal traffic, one must know what's normal. If a non-web server suddenly uses port 80 (HTTP), that could suggest lateral movement or malware creating a backdoor. 
+Hunting Covert Channels – Attackers can tunnel malicious traffic through legit protocols like HTTPS or DNS. Recognizing this sleight of hand requires a sharp understanding of how each protocol behaves under normal conditions.
+ 
+ 
+DNS (Domain Name System)
+Purpose: Resolves domain names to IP addresses.
+Protocol/Port: UDP/53 (sometimes TCP)
+
+Why SOCs Care:
+Abuse: DNS Tunneling, C2 communication, DNS amplification attacks
+Detection Tip: Look for unusually long subdomains or excessive queries
+Log Clue: Thousands of queries to strange-looking domains like x9ff23d.xyz.com
+ 
+-------------------------------------
+
+HTTP/HTTPS (Hypertext Transfer Protocol / Secure)
+Purpose: Web browsing and web application communication
+Protocol/Port: HTTP – TCP/80, HTTPS – TCP/443
+
+Why SOCs Care:
+Abuse: Malware downloads, phishing sites, encrypted C2 over HTTPS
+Detection Tip: Monitor for unknown domains, JA3/SNI anomalies
+Log Clue: GET /shell.aspx or POST /data.php from unusual endpoints
+
+GET-
+POST-
+PUT- 
+
+--------------------------------------------------------------
+JA3-
+JA3 is a method of fingerprinting TLS (Transport Layer Security) client applications by hashing specific fields from the TLS Client Hello packet. 
+These fields include:
++ SSL/TLS version
++ Cipher suites
++ Extensions
++ Elliptic curves
++ Elliptic curve point formats
+
+By combining and hashing these values (using MD5), JA3 produces a unique identifier — a JA3 hash — that reflects the TLS configuration of a client. There’s also JA3S, which fingerprints the server side of the handshake.
+Think of it like this: if TLS handshakes were handshakes at a party, JA3 is the unique way someone shakes hands — firm grip, double pump, left foot forward — and you can recognize them even if they’re wearing a mask.
+ 
+ 
+What is a JA3 Anomaly?
+A JA3 anomaly occurs when a TLS fingerprint deviates from the expected or known patterns in your environment. This could mean:
+A new or rare JA3 hash appears
+A known JA3 hash is used in an unusual context (e.g. different IP, time, or volume)
+A JA3 hash mimics a legitimate client but behaves suspiciously
+These anomalies often signal command-and-control (C2) traffic, malware using custom TLS libraries, or supply chain attacks where compromised software phones home to an attacker-controlled server.
+ 
+ ---------------------------------------------------------------
+
+SMB (Server Message Block)
+Purpose: A network file sharing protocol that allows computers to share files, printers, and other resources across a network. It operates on a client-server model, where clients request access to resources hosted on servers. SMB is widely used in Windows environments and is also compatible with other operating systems like macOS, Linux, and Android
+Protocol/Port: TCP/445
+Abuse: Lateral movement (e.g., EternalBlue, Pass-the-Hash), ransomware spread
+Detection Tip: Unusual file access, failed authentications, access from non-standard hosts
+Log Clue: Connections to many internal IPs over port 445 in quick succession
+ 
+ -----------------------------------------------------------------
+
+Essential Protocols Every SOC Analyst Must Understand- 
+SMB, FTP, and NFS are all protocols used for file sharing over a network, but they differ in their functionality and usage. 
+
+
+SMB (Server Message Block) is a protocol primarily used for file and printer sharing in Windows environments and integrates well with Active Directory. 
+Used for- File Sharing
+Windows Networks
+Port 445
+ 
+ 
+NFS (Network File System) is commonly used in Unix-like systems for sharing files as if they were local, offering transparent access to remote files. 
+Distributed file system
+Unix/Linux system
+Port 2049
+ 
+ 
+FTP (File Transfer Protocol) is a standard protocol for transferring files between computers, often used for public access to files and is generally less integrated with operating system file systems compared to NFS and SMB.
+Data Transfer
+Client-Server model
+Port 21
+ 
+------------------------------------------------------
+
+LDAP (Lightweight Directory Access Protocol) 
+LDAP, which stands for Lightweight Directory Access Protocol, is a protocol used to access and manage directory information services over an IP network. It acts as a standard language for applications to communicate with directory services, like Active Directory, to retrieve information about users, computers, and other network resources. 
+Essentially, it's a way for applications to "look up" information in a directory, similar to how a phonebook helps you find someone's phone number. 
+ 
+LDAP (Lightweight Directory Access Protocol)
+Purpose: Querying and modifying directory services (like Active Directory)
+Protocol/Port: TCP/389
+
+Why SOCs Care:
+Abuse: Account enumeration, recon of users/groups in AD
+Detection Tip: Excessive queries, strange baseDN filters
+Log Clue: Repeated LDAP search operations from a workstation
+ 
+--------------------------------------------------------------------------------
+
+SSH (Secure Shell)
+Purpose: Encrypted terminal access for remote administration
+Protocol/Port: TCP/22
+
+Why SOCs Care:
+Abuse: Lateral movement, data exfiltration, brute force
+Detection Tip: Unusual login times, SSH to unexpected hosts
+Log Clue: Repeated failed logins from one IP followed by a successful one
+ 
+--------------------------------------------- 
+ICMP (Internet Control Message Protocol)
+Purpose: Diagnostic messages (e.g., ping, unreachable)
+Protocol/Port: N/A (Network Layer)
+
+Why SOCs Care:
+Abuse: Recon (ping sweeps), covert channels (ICMP tunneling)
+Detection Tip: ICMP echo traffic at regular intervals or large payloads
+Log Clue: Host beaconing with ICMP every 60 seconds
+ 
+ 
+-----------------------------------------------------
+ICMP (Internet Control Message Protocol)
+ICMP tunneling is like smuggling messages inside a “ping” — it’s a sneaky way attackers can bypass firewalls and exfiltrate data by hiding it inside ICMP packets, which are typically used for diagnostics like ping or traceroute.
+ICMP tunneling exploits this by embedding other protocols (like TCP or HTTP) or even shell commands inside ICMP packets. This creates a covert communication channel between two systems — often used for:
+ 
+Command and Control (C2): Letting malware receive instructions from an attacker
+Data exfiltration: Slowly leaking sensitive data out of a network
+Firewall evasion: Since ICMP is often allowed through firewalls, it can sneak past perimeter defenses
+
+
+========================================================
+Known Ports-
+
+Port 21-  FTP (File Transfer Protocol)
+Use Case- File transfer	
+Red Flags / SOC Relevance- External FTP? → Data exfiltration risk
+ 
+ 
+Port 22- SSH (Secure Shell)	
+Use Case- Remote shell, secure login	
+Red Flags / SOC Relevance- Brute force attempts, lateral movement
+ 
+ 
+Port 23- Telnet (Telecommunication Network Protocol)
+Use Case- Unencrypted remote access	
+Red Flags / SOC Relevance- Should not be used—flag immediately
+ 
+Port 25- SMTP (Simple Mail Transfer Protocol)
+Use Case- Email sending	
+Red Flags / SOC Relevance- Spam or phishing campaigns
+ 
+ 
+Port 53- DNS (Domain Name System)	
+Use Case- Domain name resolution	
+Red Flags / SOC Relevance- DNS tunneling, fast flux, C2
+ 
+ 
+Port 80- HTTP (Hypertext Transfer Protocol)	
+Use Case- Web traffic	
+Red Flags / SOC Relevance- C2 communication, malware download
+ 
+ 
+Port 110- POP3 (Post Office Protocol v3)	
+Use Case- Mail retrieval	
+Red Flags / SOC Relevance- Legacy usage, insecure
+ 
+Port 123- NTP (Network Time Protocol)	
+Use Case- Time synchronization	
+Red Flags / SOC Relevance- NTP amplification DDoS attacks
+ 
+ 
+Port 135- RPC (Remote Procedure Call)	
+Use Case- Microsoft DCOM services	
+Red Flags / SOC Relevance- Lateral movement, recon in Windows environments
+ 
+ 
+Port 137-139- NetBIOS (Network Basic Input/Output System)	
+Use Case- Windows file/printer sharing	
+Red Flags / SOC Relevance- Recon, sensitive data enumeration
+ 
+ 
+Port 143- IMAP (Internet Message Access Protocol)	
+Use Case- Mail retrieval	
+Red Flags / SOC Relevance- Email compromise or unauthorized access
+ 
+ 
+Port- 161/162- SNMP (Simple Network Management Protocol)	
+Use Case- Network device monitoring	
+Red Flags / SOC Relevance- Information leakage, SNMP brute force
+ 
+ 
+Port 389-LDAP (Lightweight Directory Access Protocol)	
+Use Case- Active Directory auth/search	
+Red Flags / SOC Relevance- Account enumeration, LDAP injection
+ 
+ 
+Port 443-HTTPS (Hypertext Transfer Protocol Secure)	
+Use Case- Encrypted web traffic	
+Red Flags / SOC Relevance- Malware/C2 hidden in encryption
+ 
+ 
+Port 445-SMB (Server Message Block)	
+Use Case- File sharing on Windows	
+Red Flags / SOC Relevance- EternalBlue, WannaCry, ransomware lateral spread
+ 
+ 
+Port 3306- MySQL (My Structured Query Language)	
+Use Case- Database communication	
+Red Flags / SOC Relevance- Unauthorized access, SQL injection attempts
+ 
+ 
+Port 3389- RDP (Remote Desktop Protocol)	
+Use Case- Remote desktop access	
+Red Flags / SOC Relevance- Brute force, exposed RDP servers
+ 
+ 
+Port Any- ICMP (Internet Control Message Protocol)	
+Use Case- Network diagnostics	
+Red Flags / SOC Relevance- Ping sweeps, covert channels, ICMP tunneling
+ 
+============================================================================ 
+How Protocol Knowledge Helps in Faster Triage
+Knowing normal protocol behavior allows an analyst to recognize harmless activity faster.
+Example: A sudden spike in ICMP traffic? If it's from a known internal monitoring system → no need to escalate.
+If the destination port is 443 and it's connecting to a known cloud domain — probably business as usual.
+ 
+ 
+Spotting Real Anomalies Quickly-
+Protocol misuse is a common attack tactic. Recognizing protocol red flags helps pinpoint true positives faster.
+Example: DNS (port 53) sending large, unusual payloads? That’s likely DNS tunneling, not legit DNS resolution.
+ 
+ 
+Understanding the Attack Surface-
+Protocol knowledge helps analysts contextualize alerts:
+An alert for RDP (port 3389) from a foreign IP = high risk
+Same alert, but from internal IT subnet during patch night = low risk
+This eliminates unnecessary escalations.
+ 
+ 
 
 
 
